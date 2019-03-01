@@ -121,13 +121,14 @@ class Player(pygame.sprite.Sprite):
     def handle_keys(self, event):
         key = pygame.key.get_pressed()
         if event.type == pygame.QUIT:
+            pygame.mixer.music.stop()
             return
         elif key[pygame.K_RIGHT]:
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT]:
             self.rect.x -= MOVE_SPEED_PLAYER
         elif key[pygame.K_x]:
-            play_sound("src/assets/sounds/car+horn+x.mp3")
+            play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
 
     def handle_joystick(self, event):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
@@ -136,7 +137,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x += x * MOVE_SPEED_PLAYER
         if event.type == pygame.JOYBUTTONDOWN:
             if self.joystick.get_button(1):
-                play_sound("src/assets/sounds/car+horn+x.mp3")
+                play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
 
 
 def init_obstacles(n):
@@ -230,6 +231,10 @@ def play_sound(sound):
     pygame.mixer.music.play(0)
 
 
+def play_overlap(sound, max_time=500):
+    pygame.mixer.Channel(0).play(pygame.mixer.Sound(sound), maxtime=max_time)
+
+
 def show_menu():
     menu_text = "Your score: {0}".format(scoring.get_score())
     if scoring.get_score() > scoring.get_high_score():
@@ -250,6 +255,9 @@ def show_menu():
 
 
 def main():
+
+    play_sound("src/assets/sounds/background.mp3")
+
     clock = pygame.time.Clock()
     bottom_border = Border(PINK, WIDTH * 10, 1000, WIDTH, HEIGHT + 498)
 
@@ -288,6 +296,7 @@ def main():
 
         # TODO: Show menu after car accident
         if player.crashed:
+            pygame.mixer.music.stop()
             play_sound("src/assets/sounds/Explosion+5.mp3")
             time.sleep(1)
             show_menu()
