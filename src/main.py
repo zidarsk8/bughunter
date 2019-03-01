@@ -111,6 +111,7 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self, joystick):
         super().__init__()
+        self.crashed = False
         self.joystick = joystick
         self.image = pygame.image.load("src/assets/images/player.png")
         self.rect = self.image.get_rect()
@@ -137,7 +138,9 @@ def init_obstacles(n):
     return obstacles
 
 
-def tick_obstacles(delta_time, obstacles, obstacle_count, bottom_border):
+def tick_obstacles(delta_time, player, obstacles, obstacle_count, bottom_border):
+    car_collision = pygame.sprite.spritecollide(player, obstacles, True)
+    player.crashed = len(car_collision) > 0
     collisions = pygame.sprite.spritecollide(bottom_border, obstacles, True)
     for col in collisions:
         obstacles.remove(col)
@@ -262,7 +265,7 @@ def main():
         obstacle_count = (scoring.get_score() / 100) ** 0.3
 
         (obstacles, num_collisions) = tick_obstacles(
-            delta_time, obstacles, obstacle_count, bottom_border
+            delta_time, player, obstacles, obstacle_count, bottom_border
         )
         all_sprites.empty()
         all_sprites.add(player)
@@ -270,7 +273,7 @@ def main():
         pygame.display.flip()
 
         # TODO: Show menu after car accident
-        if scoring.get_score() > 1000:
+        if player.crashed:
             show_menu()
 
 
