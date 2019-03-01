@@ -114,7 +114,7 @@ class Player(pygame.sprite.Sprite):
         self.joystick = joystick
         self.image = pygame.image.load("src/assets/images/player.png")
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2 - 50)
+        self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2)
 
     def handle_keys(self, event):
         key = pygame.key.get_pressed()
