@@ -124,6 +124,7 @@ class Player(pygame.sprite.Sprite):
             pygame.mixer.music.stop()
             return
         elif key[pygame.K_RIGHT] and self.rect.x < (WIDTH - 175):
+            play_overlap("src/assets/sounds/Carscreech.wav", max_time=250, channel=1)
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT] and self.rect.x > 5:
             self.rect.x -= MOVE_SPEED_PLAYER
@@ -134,6 +135,7 @@ class Player(pygame.sprite.Sprite):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
             x = self.joystick.get_axis(0)
             if x >= 0.05 or x <= -0.05:
+                play_overlap("src/assets/sounds/Carscreech.wav", max_time=250)
                 self.rect.x += x * MOVE_SPEED_PLAYER
         if event.type == pygame.JOYBUTTONDOWN:
             if self.joystick.get_button(1):
@@ -235,8 +237,8 @@ def play_sound(sound):
     pygame.mixer.music.play(0)
 
 
-def play_overlap(sound, max_time=500):
-    pygame.mixer.Channel(0).play(pygame.mixer.Sound(sound), maxtime=max_time)
+def play_overlap(sound, channel=0, max_time=500):
+    pygame.mixer.Channel(channel).play(pygame.mixer.Sound(sound), maxtime=max_time)
 
 
 def show_menu():
