@@ -12,7 +12,7 @@ OBSTACLE_INIT_HEIGHT = 40
 
 NUMBER_OF_LANES = 4
 
-MOVE_SPEED_PLAYER = 8
+MOVE_SPEED_PLAYER = 0.75
 
 
 SIZE = WIDTH, HEIGHT = 1000, 500
@@ -122,25 +122,27 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2)
 
-    def handle_keys(self):
+    def handle_keys(self, delta_time):
         key = pygame.key.get_pressed()
         if key[pygame.QUIT]:
             pygame.mixer.music.stop()
             return
         elif key[pygame.K_RIGHT] and self.can_move_right():
-            self.move(1)
+            self.move(1, delta_time=delta_time)
         elif key[pygame.K_LEFT] and self.can_move_left():
-            self.move(1, -1)
+            self.move(1, fact=-1, delta_time=delta_time)
         elif key[pygame.K_x]:
             play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
             self.horn = True
 
-    def handle_joystick(self, event):
+    def handle_joystick(self, event, delta_time):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
             x = self.joystick.get_axis(0)
             if x >= 0.05 or x <= -0.05:
-                if (x < 0 and self.can_move_left()) or (x > 0 and self.can_move_right()):
-                    self.move(x)
+                if (x < 0 and self.can_move_left()) or (
+                    x > 0 and self.can_move_right()
+                ):
+                    self.move(x, delta_time=delta_time)
         if event.type == pygame.JOYBUTTONDOWN:
             if self.joystick.get_button(1):
                 play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
@@ -152,8 +154,9 @@ class Player(pygame.sprite.Sprite):
     def can_move_right(self):
         return self.rect.x < (WIDTH - 175)
 
-    def move(self, x, fact = 1):
-        self.rect.x = self.rect.x + (x * fact * MOVE_SPEED_PLAYER)
+    def move(self, x, delta_time, fact=1):
+        self.rect.x = self.rect.x + (x * fact * MOVE_SPEED_PLAYER * delta_time)
+
 
 def init_obstacles(n):
     obstacles = pygame.sprite.Group()
@@ -295,11 +298,12 @@ def main():
     scoring.reset_score()
 
     while not quit:
+        delta_time = clock.tick(60)
         for event in pygame.event.get():
             quit = event.type == pygame.QUIT
-            player.handle_joystick(event)
+            player.handle_joystick(event, delta_time)
 
-        player.handle_keys()
+        player.handle_keys(delta_time)
 
         draw(all_sprites)
         delta_time = clock.tick(60)
