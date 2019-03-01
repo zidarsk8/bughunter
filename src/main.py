@@ -66,9 +66,12 @@ class Border(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, width, height, x=None, y=None):
         super().__init__()
-        self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
-        self._image.convert_alpha()
-        pygame.draw.ellipse(self._image, BLACK, self._image.get_rect())
+        if random.random() < 0.01:
+            self._image = pygame.image.load("src/assets/images/dash.png")
+        else:
+            self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
+            self._image.convert_alpha()
+            pygame.draw.ellipse(self._image, BLACK, self._image.get_rect())
 
         lane_width = (WIDTH) / (NUMBER_OF_LANES)
         self.x = (
