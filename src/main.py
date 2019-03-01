@@ -18,14 +18,18 @@ MOVE_SPEED_PLAYER = 8
 SIZE = WIDTH, HEIGHT = 1000, 500
 speed = [1, 1]
 BLACK = 0, 0, 0
-GREEN = 0, 255, 0
-RED = 255, 0, 0
+GREEN = 40, 40, 40
+RED = 220, 220, 220
 BG_COLOR = 20, 30, 120
 PINK = 200, 111, 150
 
 ZERO_POINT = [WIDTH // 2, HEIGHT // 3]
 
 screen = pygame.display.set_mode(SIZE)
+bg_image = pygame.image.load("src/assets/images/bg.png")
+
+screen.fill([255, 255, 255])
+screen.blit(bg_image, bg_image.get_rect())
 
 
 class Scoring:
@@ -129,6 +133,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= MOVE_SPEED_PLAYER
         elif key[pygame.K_x]:
             play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
+            self.horn = True
 
     def handle_joystick(self, event):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
@@ -138,6 +143,7 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.JOYBUTTONDOWN:
             if self.joystick.get_button(1):
                 play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
+                self.horn = True
 
 
 def init_obstacles(n):
@@ -194,7 +200,8 @@ def draw_lines():
 
 def draw(all_sprites):
 
-    screen.fill(BG_COLOR)
+    screen.blit(bg_image, bg_image.get_rect())
+
     text_to_screen(
         screen,
         "BEST SCORE: {score}m".format(score=scoring.get_high_score()),
