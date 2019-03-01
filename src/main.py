@@ -118,7 +118,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.crashed = False
         self.joystick = joystick
-        self.image = pygame.image.load("src/assets/images/player2.png")
+        self.image = pygame.image.load("src/assets/images/player.png")
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2)
         self.speed = 0
