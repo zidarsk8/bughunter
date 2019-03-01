@@ -127,10 +127,10 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.QUIT]:
             pygame.mixer.music.stop()
             return
-        elif key[pygame.K_RIGHT] and self.rect.x < (WIDTH - 175):
-            self.rect.x += MOVE_SPEED_PLAYER
-        elif key[pygame.K_LEFT] and self.rect.x > 5:
-            self.rect.x -= MOVE_SPEED_PLAYER
+        elif key[pygame.K_RIGHT] and self.can_move_right():
+            self.move(1)
+        elif key[pygame.K_LEFT] and self.can_move_left():
+            self.move(1, -1)
         elif key[pygame.K_x]:
             play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
             self.horn = True
@@ -139,12 +139,21 @@ class Player(pygame.sprite.Sprite):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
             x = self.joystick.get_axis(0)
             if x >= 0.05 or x <= -0.05:
-                self.rect.x += x * MOVE_SPEED_PLAYER
+                if (x < 0 and self.can_move_left()) or (x > 0 and self.can_move_right()):
+                    self.move(x)
         if event.type == pygame.JOYBUTTONDOWN:
             if self.joystick.get_button(1):
                 play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
                 self.horn = True
 
+    def can_move_left(self):
+        return self.rect.x > 5
+
+    def can_move_right(self):
+        return self.rect.x < (WIDTH - 175)
+
+    def move(self, x, fact = 1):
+        self.rect.x = self.rect.x + (x * fact * MOVE_SPEED_PLAYER)
 
 def init_obstacles(n):
     obstacles = pygame.sprite.Group()
