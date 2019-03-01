@@ -81,21 +81,18 @@ class Obstacle(pygame.sprite.Sprite):
 
     def set_position(self):
 
-        ff = self.y ** 2 / HEIGHT ** 2
         translate_y = self.y
 
         zp = ZERO_POINT[1]
-        if self.y < zp:
+        if self.y <= zp:
             factor = 0
         else:
-            factor = (self.y - zp) * (1 / (HEIGHT - zp))
+            factor_y = self.y ** 2 / HEIGHT ** 2
+            translate_y = zp + self.y * factor_y
+
+            factor = (translate_y - zp) * (1 / (HEIGHT - zp))
 
         translate_x = self.x * factor + WIDTH * (1 - factor) / 2
-        print(
-            "{:>3}   {:>5}   {:>5}    {:>5} ".format(
-                self.y, factor, self.x, translate_x
-            )
-        )
 
         self.image = pygame.transform.scale(
             self._image,
