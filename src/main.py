@@ -45,7 +45,7 @@ class Border(pygame.sprite.Sprite):
 
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, color, width, height, x=None, y=None):
+    def __init__(self, width, height, x=None, y=None):
         super().__init__()
         self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
         self._image.convert_alpha()
@@ -112,7 +112,7 @@ class Player(pygame.sprite.Sprite):
 def init_obstacles(n):
     obstacles = pygame.sprite.Group()
     for i in range(n):
-        obstacles.add(Obstacle(RED, OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT))
+        obstacles.add(Obstacle(OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT))
     return obstacles
 
 
@@ -125,9 +125,7 @@ def tick_obstacles(delta_time, obstacles, obstacle_count, bottom_border):
         obstacle.set_position()
     while len(obstacles) < obstacle_count and random.random() * 100 < obstacle_count:
         obstacles.add(
-            Obstacle(
-                RED, OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT, None, ZERO_POINT[1]
-            )
+            Obstacle(OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT, None, ZERO_POINT[1])
         )
     return (obstacles, len(collisions))
 
