@@ -21,7 +21,7 @@ BLACK = 0, 0, 0
 GREEN = 40, 40, 40
 RED = 220, 220, 220
 BG_COLOR = 20, 30, 120
-PINK = 200, 111, 150
+PINK = 100, 100, 100
 
 ZERO_POINT = [WIDTH // 2, HEIGHT // 3]
 
@@ -118,7 +118,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.crashed = False
         self.joystick = joystick
-        self.image = pygame.image.load("src/assets/images/player.png")
+        self.image = pygame.image.load("src/assets/images/player2.png")
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2)
         self.speed = 0
@@ -216,7 +216,7 @@ def draw(all_sprites):
 
     text_to_screen(
         screen,
-        "BEST SCORE: {score}m".format(score=scoring.get_high_score()),
+        "HIGH SCORE: {score}m".format(score=scoring.get_high_score()),
         20,
         20,
         30,
