@@ -294,7 +294,6 @@ def main():
         all_sprites.add(*obstacles)
         pygame.display.flip()
 
-        # TODO: Show menu after car accident
         if player.crashed:
             pygame.mixer.music.stop()
             play_sound("src/assets/sounds/Explosion+5.mp3")
