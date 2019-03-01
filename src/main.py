@@ -125,10 +125,12 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT]:
             self.rect.x -= MOVE_SPEED_PLAYER
-        elif self.joystick and event.type == pygame.JOYAXISMOTION:
+
+    def handle_joystick(self, event):
+        if self.joystick and event.type == pygame.JOYAXISMOTION:
             x = self.joystick.get_axis(0)
-            if x >= 0.1 or x <= -0.1:
-                self.rect.x += x * MOVE_SPEED_PLAYER * 1.5
+            if x >= 0.05 or x <= -0.05:
+                self.rect.x += x * MOVE_SPEED_PLAYER
 
 
 def init_obstacles(n):
@@ -256,6 +258,7 @@ def main():
     while not quit:
         for event in pygame.event.get():
             quit = event.type == pygame.QUIT
+            player.handle_joystick(event)
 
         player.handle_keys(event)
 
