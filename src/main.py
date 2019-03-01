@@ -33,6 +33,7 @@ clock = pygame.time.Clock()
 
 best_score = 0
 
+
 class Border(pygame.sprite.Sprite):
     def __init__(self, color, width, height, x=None, y=None):
         super().__init__()
@@ -100,7 +101,9 @@ class Player(pygame.sprite.Sprite):
 
     def handle_keys(self, event):
         key = pygame.key.get_pressed()
-        if key[pygame.K_RIGHT]:
+        if event.type == pygame.QUIT:
+            return
+        elif key[pygame.K_RIGHT]:
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT]:
             self.rect.x -= MOVE_SPEED_PLAYER
@@ -159,7 +162,9 @@ def draw_lines():
 def draw(all_sprites, score, best_score):
 
     screen.fill(BG_COLOR)
-    text_to_screen(screen, "BEST SCORE: {score}m".format(score=best_score), 20, 20, 30, GREEN)
+    text_to_screen(
+        screen, "BEST SCORE: {score}m".format(score=best_score), 20, 20, 30, GREEN
+    )
     text_to_screen(screen, "SCORE: {score}m".format(score=score), 20, 60, 20, RED)
 
     for sprite in all_sprites:
@@ -176,11 +181,14 @@ def init_joystick(pygame):
     joystick.init()
     return joystick
 
+
 def mainmenu_background():
     screen.fill((40, 0, 40))
 
+
 def play_the_game():
     main()
+
 
 def main():
     global best_score
@@ -235,9 +243,10 @@ def main():
                 bgfun=mainmenu_background,
             )
 
-            menu.add_option('Try Again', play_the_game)
-            menu.add_option('Exit', PYGAME_MENU_EXIT)
+            menu.add_option("Try Again", play_the_game)
+            menu.add_option("Exit", PYGAME_MENU_EXIT)
             menu.mainloop(pygame.event.get())
+
 
 if __name__ == "__main__":
     main()
