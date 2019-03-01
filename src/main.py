@@ -2,6 +2,8 @@ import sys, pygame
 import random
 
 pygame.init()
+j = pygame.joystick.Joystick(0)
+j.init()
 
 MAX_NUMBER_OF_OBSTACLES = 20
 
@@ -9,6 +11,9 @@ OBSTACLE_INIT_WITDTH = 100
 OBSTACLE_INIT_HEIGHT = 100
 
 NUMBER_OF_LANES = 4
+
+MOVE_SPEED_PLAYER = 8
+
 
 SIZE = WIDTH, HEIGHT = 1000, 500
 speed = [1, 1]
@@ -88,9 +93,20 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("src/ball_noun_001_01090.jpg")
+        self.image = pygame.image.load("src/assets/images/player.png")
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2 - 50)
+
+    def handle_keys(self, event):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_RIGHT]:
+            self.rect.x += MOVE_SPEED_PLAYER
+        elif key[pygame.K_LEFT]:
+            self.rect.x -= MOVE_SPEED_PLAYER
+        elif event.type == pygame.JOYAXISMOTION:
+            x = j.get_axis(0)
+            if x >= 0.1 or x <= -0.1:
+                self.rect.x += x * MOVE_SPEED_PLAYER * 1.5
 
 
 def init_obstacles(n):
@@ -172,6 +188,8 @@ def main():
         for event in pygame.event.get():
             quit = event.type == pygame.QUIT
 
+        player.handle_keys(event)
+
         draw(all_sprites, score)
         delta_time = clock.tick(60)
         score += delta_time
@@ -181,7 +199,7 @@ def main():
             delta_time, obstacles, obstacle_count, bottom_border
         )
         all_sprites.empty()
-        # all_sprites.add(player)
+        all_sprites.add(player)
         all_sprites.add(*obstacles)
         pygame.display.flip()
 
