@@ -123,9 +123,9 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.QUIT:
             pygame.mixer.music.stop()
             return
-        elif key[pygame.K_RIGHT]:
+        elif key[pygame.K_RIGHT] and self.rect.x < (WIDTH - 175):
             self.rect.x += MOVE_SPEED_PLAYER
-        elif key[pygame.K_LEFT]:
+        elif key[pygame.K_LEFT] and self.rect.x > 5:
             self.rect.x -= MOVE_SPEED_PLAYER
         elif key[pygame.K_x]:
             play_overlap("src/assets/sounds/car+horn+x.wav", max_time=250)
