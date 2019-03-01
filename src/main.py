@@ -42,7 +42,7 @@ class Border(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, color, width, height, x=None, y=None):
         super().__init__()
-        self._image = pygame.Surface([width, height])
+        self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
         self._image.convert_alpha()
         pygame.draw.circle(self._image, PINK, (width // 2, height // 2), height // 2)
 
