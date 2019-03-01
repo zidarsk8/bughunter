@@ -6,8 +6,8 @@ pygame.init()
 
 MAX_NUMBER_OF_OBSTACLES = 20
 
-OBSTACLE_INIT_WITDTH = 100
-OBSTACLE_INIT_HEIGHT = 100
+OBSTACLE_INIT_WITDTH = 170
+OBSTACLE_INIT_HEIGHT = 40
 
 NUMBER_OF_LANES = 4
 
@@ -50,7 +50,7 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
         self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
         self._image.convert_alpha()
-        pygame.draw.circle(self._image, PINK, (width // 2, height // 2), height // 2)
+        pygame.draw.ellipse(self._image, PINK, self._image.get_rect())
 
         lane_width = (WIDTH) / (NUMBER_OF_LANES)
         self.x = (
