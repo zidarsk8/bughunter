@@ -20,7 +20,7 @@ speed = [1, 1]
 BLACK = 0, 0, 0
 GREEN = 0, 255, 0
 RED = 255, 0, 0
-BG_COLOR = 20, 30, 70
+BG_COLOR = 20, 30, 120
 PINK = 200, 111, 150
 
 ZERO_POINT = [WIDTH // 2, HEIGHT // 3]
