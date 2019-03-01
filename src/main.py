@@ -1,6 +1,7 @@
 import sys, pygame, pygameMenu
 from pygameMenu.locals import *
 import random
+import time
 
 pygame.init()
 
@@ -125,12 +126,17 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT]:
             self.rect.x -= MOVE_SPEED_PLAYER
+        elif key[pygame.K_x]:
+            play_sound("src/assets/sounds/car+horn+x.mp3")
 
     def handle_joystick(self, event):
         if self.joystick and event.type == pygame.JOYAXISMOTION:
             x = self.joystick.get_axis(0)
             if x >= 0.05 or x <= -0.05:
                 self.rect.x += x * MOVE_SPEED_PLAYER
+        if event.type == pygame.JOYBUTTONDOWN:
+            if self.joystick.get_button(1):
+                play_sound("src/assets/sounds/car+horn+x.mp3")
 
 
 def init_obstacles(n):
@@ -219,6 +225,11 @@ def play_the_game():
     main()
 
 
+def play_sound(sound):
+    pygame.mixer.music.load(sound)
+    pygame.mixer.music.play(0)
+
+
 def show_menu():
     menu_text = "Your score: {0}".format(scoring.get_score())
     if scoring.get_score() > scoring.get_high_score():
@@ -277,6 +288,8 @@ def main():
 
         # TODO: Show menu after car accident
         if player.crashed:
+            play_sound("src/assets/sounds/Explosion+5.mp3")
+            time.sleep(1)
             show_menu()
 
 
