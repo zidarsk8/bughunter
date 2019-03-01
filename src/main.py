@@ -151,7 +151,7 @@ def tick_obstacles(delta_time, speed, player, obstacles, obstacle_count, bottom_
     car_collisions = pygame.sprite.spritecollide(player, obstacles, False)
     if len(car_collisions) > 0:
         for car_collision in car_collisions:
-            if player.rect.top < (car_collision.y - 15):
+            if player.rect.top < (car_collision.y - 50):
                 player.crashed = True
                 break
     collisions = pygame.sprite.spritecollide(bottom_border, obstacles, True)
