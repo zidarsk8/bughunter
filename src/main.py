@@ -148,8 +148,12 @@ def init_obstacles(n):
 
 
 def tick_obstacles(delta_time, speed, player, obstacles, obstacle_count, bottom_border):
-    car_collision = pygame.sprite.spritecollide(player, obstacles, True)
-    player.crashed = len(car_collision) > 0
+    car_collisions = pygame.sprite.spritecollide(player, obstacles, False)
+    if len(car_collisions) > 0:
+        for car_collision in car_collisions:
+            if player.rect.top < (car_collision.y - 15):
+                player.crashed = True
+                break
     collisions = pygame.sprite.spritecollide(bottom_border, obstacles, True)
     for col in collisions:
         obstacles.remove(col)
@@ -203,10 +207,10 @@ def draw(all_sprites):
         screen, "SCORE: {score}m".format(score=scoring.get_score()), 20, 60, 20, RED
     )
 
+    draw_lines()
+
     for sprite in all_sprites:
         screen.blit(sprite.image, sprite.rect)
-
-    draw_lines()
 
 
 def init_joystick(pygame):
@@ -291,8 +295,8 @@ def main():
             delta_time, speed, player, obstacles, obstacle_count, bottom_border
         )
         all_sprites.empty()
-        all_sprites.add(player)
         all_sprites.add(*obstacles)
+        all_sprites.add(player)
         pygame.display.flip()
 
         if player.crashed:
