@@ -20,7 +20,7 @@ speed = [1, 1]
 BLACK = 0, 0, 0
 GREEN = 0, 255, 0
 RED = 255, 0, 0
-BG_COLOR = 10, 20, 50
+BG_COLOR = 20, 30, 70
 PINK = 200, 111, 150
 
 ZERO_POINT = [WIDTH // 2, HEIGHT // 3]
@@ -68,7 +68,7 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
         self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
         self._image.convert_alpha()
-        pygame.draw.ellipse(self._image, PINK, self._image.get_rect())
+        pygame.draw.ellipse(self._image, BLACK, self._image.get_rect())
 
         lane_width = (WIDTH) / (NUMBER_OF_LANES)
         self.x = (
