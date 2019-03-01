@@ -169,7 +169,6 @@ def draw(all_sprites, score):
 
 
 def main():
-    bottom_border = Obstacle(BLACK, WIDTH, 2, 0, HEIGHT - 2)
     bottom_border = Border(PINK, WIDTH * 10, 1000, WIDTH, HEIGHT + 498)
 
     all_sprites = pygame.sprite.Group()
