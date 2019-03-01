@@ -147,14 +147,14 @@ def init_obstacles(n):
     return obstacles
 
 
-def tick_obstacles(delta_time, player, obstacles, obstacle_count, bottom_border):
+def tick_obstacles(delta_time, speed, player, obstacles, obstacle_count, bottom_border):
     car_collision = pygame.sprite.spritecollide(player, obstacles, True)
     player.crashed = len(car_collision) > 0
     collisions = pygame.sprite.spritecollide(bottom_border, obstacles, True)
     for col in collisions:
         obstacles.remove(col)
     for obstacle in obstacles:
-        obstacle.y += 1
+        obstacle.y += delta_time * speed
         obstacle.set_position()
     while len(obstacles) < obstacle_count and random.random() * 100 < obstacle_count:
         obstacles.add(
@@ -286,8 +286,9 @@ def main():
         scoring.update_score(delta_time)
         obstacle_count = (scoring.get_score() / 100) ** 0.3
 
+        speed = scoring.get_score() ** 0.1 / 15
         (obstacles, num_collisions) = tick_obstacles(
-            delta_time, player, obstacles, obstacle_count, bottom_border
+            delta_time, speed, player, obstacles, obstacle_count, bottom_border
         )
         all_sprites.empty()
         all_sprites.add(player)
