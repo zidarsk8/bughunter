@@ -118,9 +118,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2)
 
-    def handle_keys(self, event):
+    def handle_keys(self):
         key = pygame.key.get_pressed()
-        if event.type == pygame.QUIT:
+        if key[pygame.QUIT]:
             pygame.mixer.music.stop()
             return
         elif key[pygame.K_RIGHT] and self.rect.x < (WIDTH - 175):
@@ -279,7 +279,7 @@ def main():
             quit = event.type == pygame.QUIT
             player.handle_joystick(event)
 
-        player.handle_keys(event)
+        player.handle_keys()
 
         draw(all_sprites)
         delta_time = clock.tick(60)
