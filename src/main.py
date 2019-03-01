@@ -1,9 +1,10 @@
-import sys, pygame
+import sys, pygame, pygameMenu
+from pygameMenu.locals import *
 import random
 
 pygame.init()
-j = pygame.joystick.Joystick(0)
-j.init()
+#j = pygame.joystick.Joystick(0)
+#j.init()
 
 MAX_NUMBER_OF_OBSTACLES = 20
 
@@ -32,6 +33,7 @@ screen = pygame.display.set_mode(SIZE)
 
 clock = pygame.time.Clock()
 
+best_score = 0
 
 class Border(pygame.sprite.Sprite):
     def __init__(self, color, width, height, x=None, y=None):
@@ -157,18 +159,26 @@ def draw_lines():
         pygame.draw.line(screen, RED, ZERO_POINT, [line_bottom_x, HEIGHT], 1)
 
 
-def draw(all_sprites, score):
+def draw(all_sprites, score, best_score):
 
     screen.fill(BG_COLOR)
-    text_to_screen(screen, "SCORE: {score}m".format(score=score), 20, 20)
+    text_to_screen(screen, "BEST SCORE: {score}m".format(score=best_score), 20, 20, 30, GREEN)
+    text_to_screen(screen, "SCORE: {score}m".format(score=score), 20, 60, 20, RED)
 
     for sprite in all_sprites:
         screen.blit(sprite.image, sprite.rect)
 
     draw_lines()
 
+def mainmenu_background():
+    screen.fill((40, 0, 40))
+
+def play_the_game():
+    main()
 
 def main():
+    global best_score
+    clock = pygame.time.Clock()
     bottom_border = Obstacle(BLACK, WIDTH, 2, 0, HEIGHT - 2)
     bottom_border = Border(PINK, WIDTH * 10, 1000, WIDTH, HEIGHT + 498)
 
@@ -187,10 +197,9 @@ def main():
     while not quit:
         for event in pygame.event.get():
             quit = event.type == pygame.QUIT
+            player.handle_keys(event)
 
-        player.handle_keys(event)
-
-        draw(all_sprites, score)
+        draw(all_sprites, score, best_score)
         delta_time = clock.tick(60)
         score += delta_time
         obstacle_count = (score / 100) ** 0.3
@@ -203,6 +212,24 @@ def main():
         all_sprites.add(*obstacles)
         pygame.display.flip()
 
+        # TODO: Show menu after car accident
+        if score > 10000:
+            menu_text = "Your score: {0}".format(score)
+            if score > best_score:
+                best_score = score
+
+            menu = pygameMenu.Menu(
+                screen,
+                WIDTH,
+                HEIGHT,
+                pygameMenu.fonts.FONT_NEVIS,
+                "Crash! Score: {0}".format(score),
+                bgfun=mainmenu_background,
+            )
+
+            menu.add_option('Try Again', play_the_game)
+            menu.add_option('Exit', PYGAME_MENU_EXIT)
+            menu.mainloop(pygame.event.get())
 
 if __name__ == "__main__":
     main()

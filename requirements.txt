@@ -1,3 +1,4 @@
 pygame
 ipdb
 ipython
+pygame-menu
