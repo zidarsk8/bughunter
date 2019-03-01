@@ -3,8 +3,6 @@ from pygameMenu.locals import *
 import random
 
 pygame.init()
-#j = pygame.joystick.Joystick(0)
-#j.init()
 
 MAX_NUMBER_OF_OBSTACLES = 20
 
@@ -47,7 +45,7 @@ class Border(pygame.sprite.Sprite):
 
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, color, width, height, x=None, y=None):
+    def __init__(self, width, height, x=None, y=None):
         super().__init__()
         self._image = pygame.Surface([width, height], pygame.SRCALPHA, 32)
         self._image.convert_alpha()
@@ -93,8 +91,9 @@ class Obstacle(pygame.sprite.Sprite):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, joystick):
         super().__init__()
+        self.joystick = joystick
         self.image = pygame.image.load("src/assets/images/player.png")
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - self.image.get_height() // 2 - 50)
@@ -105,8 +104,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += MOVE_SPEED_PLAYER
         elif key[pygame.K_LEFT]:
             self.rect.x -= MOVE_SPEED_PLAYER
-        elif event.type == pygame.JOYAXISMOTION:
-            x = j.get_axis(0)
+        elif self.joystick and event.type == pygame.JOYAXISMOTION:
+            x = self.joystick.get_axis(0)
             if x >= 0.1 or x <= -0.1:
                 self.rect.x += x * MOVE_SPEED_PLAYER * 1.5
 
@@ -114,7 +113,7 @@ class Player(pygame.sprite.Sprite):
 def init_obstacles(n):
     obstacles = pygame.sprite.Group()
     for i in range(n):
-        obstacles.add(Obstacle(RED, OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT))
+        obstacles.add(Obstacle(OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT))
     return obstacles
 
 
@@ -127,9 +126,7 @@ def tick_obstacles(delta_time, obstacles, obstacle_count, bottom_border):
         obstacle.set_position()
     while len(obstacles) < obstacle_count and random.random() * 100 < obstacle_count:
         obstacles.add(
-            Obstacle(
-                RED, OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT, None, ZERO_POINT[1]
-            )
+            Obstacle(OBSTACLE_INIT_WITDTH, OBSTACLE_INIT_HEIGHT, None, ZERO_POINT[1])
         )
     return (obstacles, len(collisions))
 
@@ -170,6 +167,15 @@ def draw(all_sprites, score, best_score):
 
     draw_lines()
 
+
+def init_joystick(pygame):
+    if not pygame.joystick.get_count():
+        return None
+
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
+    return joystick
+
 def mainmenu_background():
     screen.fill((40, 0, 40))
 
@@ -179,7 +185,6 @@ def play_the_game():
 def main():
     global best_score
     clock = pygame.time.Clock()
-    bottom_border = Obstacle(BLACK, WIDTH, 2, 0, HEIGHT - 2)
     bottom_border = Border(PINK, WIDTH * 10, 1000, WIDTH, HEIGHT + 498)
 
     all_sprites = pygame.sprite.Group()
@@ -188,7 +193,9 @@ def main():
     obstacle_count = 0
     all_sprites.add(bottom_border)
 
-    player = Player()
+    joystick = init_joystick(pygame)
+
+    player = Player(joystick)
     all_sprites.add(player)
 
     quit = False
@@ -197,7 +204,8 @@ def main():
     while not quit:
         for event in pygame.event.get():
             quit = event.type == pygame.QUIT
-            player.handle_keys(event)
+
+        player.handle_keys(event)
 
         draw(all_sprites, score, best_score)
         delta_time = clock.tick(60)
