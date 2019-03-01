@@ -220,7 +220,7 @@ def draw(all_sprites):
         GREEN,
     )
     text_to_screen(
-        screen, "SCORE: {score}m".format(score=scoring.get_score()), 20, 60, 20, RED
+        screen, "SCORE: {score}m".format(score=scoring.get_score()), 20, 60, 20, PINK
     )
 
     draw_lines()
