@@ -22,16 +22,33 @@ RED = 255, 0, 0
 BG_COLOR = 10, 20, 50
 PINK = 200, 111, 150
 
-
-SCORE = 0
-
 ZERO_POINT = [WIDTH // 2, HEIGHT // 3]
 
 screen = pygame.display.set_mode(SIZE)
 
-clock = pygame.time.Clock()
 
-best_score = 0
+class Scoring:
+    def __init__(self):
+        self.score = 0
+        self.high_score = 0
+
+    def get_score(self):
+        return self.score
+
+    def get_high_score(self):
+        return self.high_score
+
+    def update_high_score(self):
+        self.high_score = self.score
+
+    def update_score(self, add_value):
+        self.score += add_value
+
+    def reset_score(self):
+        self.score = 0
+
+
+scoring = Scoring()
 
 
 class Border(pygame.sprite.Sprite):
@@ -159,13 +176,20 @@ def draw_lines():
         pygame.draw.line(screen, RED, ZERO_POINT, [line_bottom_x, HEIGHT], 1)
 
 
-def draw(all_sprites, score, best_score):
+def draw(all_sprites):
 
     screen.fill(BG_COLOR)
     text_to_screen(
-        screen, "BEST SCORE: {score}m".format(score=best_score), 20, 20, 30, GREEN
+        screen,
+        "BEST SCORE: {score}m".format(score=scoring.get_high_score()),
+        20,
+        20,
+        30,
+        GREEN,
     )
-    text_to_screen(screen, "SCORE: {score}m".format(score=score), 20, 60, 20, RED)
+    text_to_screen(
+        screen, "SCORE: {score}m".format(score=scoring.get_score()), 20, 60, 20, RED
+    )
 
     for sprite in all_sprites:
         screen.blit(sprite.image, sprite.rect)
@@ -190,8 +214,26 @@ def play_the_game():
     main()
 
 
+def show_menu():
+    menu_text = "Your score: {0}".format(scoring.get_score())
+    if scoring.get_score() > scoring.get_high_score():
+        scoring.update_high_score()
+
+    menu = pygameMenu.Menu(
+        screen,
+        WIDTH,
+        HEIGHT,
+        pygameMenu.fonts.FONT_NEVIS,
+        "Crash! Score: {0}".format(scoring.get_score()),
+        bgfun=mainmenu_background,
+    )
+
+    menu.add_option("Try Again", play_the_game)
+    menu.add_option("Exit", PYGAME_MENU_EXIT)
+    menu.mainloop(pygame.event.get())
+
+
 def main():
-    global best_score
     clock = pygame.time.Clock()
     bottom_border = Border(PINK, WIDTH * 10, 1000, WIDTH, HEIGHT + 498)
 
@@ -205,9 +247,8 @@ def main():
 
     player = Player(joystick)
     all_sprites.add(player)
-
     quit = False
-    score = 0
+    scoring.reset_score()
 
     while not quit:
         for event in pygame.event.get():
@@ -215,10 +256,10 @@ def main():
 
         player.handle_keys(event)
 
-        draw(all_sprites, score, best_score)
+        draw(all_sprites)
         delta_time = clock.tick(60)
-        score += delta_time
-        obstacle_count = (score / 100) ** 0.3
+        scoring.update_score(delta_time)
+        obstacle_count = (scoring.get_score() / 100) ** 0.3
 
         (obstacles, num_collisions) = tick_obstacles(
             delta_time, obstacles, obstacle_count, bottom_border
@@ -229,23 +270,8 @@ def main():
         pygame.display.flip()
 
         # TODO: Show menu after car accident
-        if score > 10000:
-            menu_text = "Your score: {0}".format(score)
-            if score > best_score:
-                best_score = score
-
-            menu = pygameMenu.Menu(
-                screen,
-                WIDTH,
-                HEIGHT,
-                pygameMenu.fonts.FONT_NEVIS,
-                "Crash! Score: {0}".format(score),
-                bgfun=mainmenu_background,
-            )
-
-            menu.add_option("Try Again", play_the_game)
-            menu.add_option("Exit", PYGAME_MENU_EXIT)
-            menu.mainloop(pygame.event.get())
+        if scoring.get_score() > 1000:
+            show_menu()
 
 
 if __name__ == "__main__":
